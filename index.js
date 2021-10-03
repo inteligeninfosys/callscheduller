@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const cors = require('cors');
 var data = require('./data.js');
 const ical = require('ical-generator');
+const { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } = require('constants');
 const app = express();
 
 app.use(cors());
@@ -31,7 +32,7 @@ function getIcalObjectInstance(starttime, endtime, summary,description, location
     return cal;
     }
 
-app.post("/v1/sendemail", (req, res) => {
+app.post("/callscheduler/v1/sendemail", (req, res) => {
 
     var transporter = nodemailer.createTransport({
         host: data.smtpserver,
@@ -39,6 +40,8 @@ app.post("/v1/sendemail", (req, res) => {
         secure: false, // upgrade later with STARTTLS
         tls: { rejectUnauthorized: false },
         debug: true,
+        type: 'login',
+        requireTLS: true,
         auth: {
             user: data.user,
             pass: data.pass
@@ -65,10 +68,10 @@ app.post("/v1/sendemail", (req, res) => {
         'END:VCALENDAR';
 
     let mailOptions = {
-        from: 'ecollect@co-opbank.co.ke',
-        to: req.toemail,
-        subject: "Call Schedule " + req.custname,
-        html: "<body> Call schedule </body>",
+        from: 'ecollectsystem@gmail.com',
+        to: 'kevin.abongo@royalcyber.com',
+        subject: "E-Collect Call Schedule " + req.custname,
+        html: "<body> Call schedule link</body>",
         icalEvent: {
             filename: "invitation.ics",
             method: 'request',
